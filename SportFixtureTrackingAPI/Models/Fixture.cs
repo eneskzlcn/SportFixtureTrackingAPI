@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Text.Json.Serialization;
 #nullable disable
 
 namespace SportFixtureTrackingAPI.Models
@@ -21,6 +21,7 @@ namespace SportFixtureTrackingAPI.Models
 
         public virtual Team AwayTeam { get; set; }
         public virtual Team HomeTeam { get; set; }
+        [JsonIgnore]
         public virtual ICollection<FixtureResult> FixtureResults { get; set; }
     }
 }

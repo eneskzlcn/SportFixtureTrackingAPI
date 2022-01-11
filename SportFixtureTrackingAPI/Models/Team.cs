@@ -1,5 +1,6 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 #nullable disable
 
@@ -20,10 +21,15 @@ namespace SportFixtureTrackingAPI.Models
         public string TeamName { get; set; }
         public int PlayerCount { get; set; }
 
+      
         public virtual Club Club { get; set; }
+        
         public virtual Sport Sport { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Fixture> FixtureAwayTeams { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Fixture> FixtureHomeTeams { get; set; }
+        [JsonIgnore]
         public virtual ICollection<FixtureResult> FixtureResults { get; set; }
     }
 }
