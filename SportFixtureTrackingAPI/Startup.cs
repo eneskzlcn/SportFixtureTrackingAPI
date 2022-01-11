@@ -34,9 +34,7 @@ namespace SportFixtureTrackingAPI
         
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
-
             services.AddDbContext<SportFixturePointContext>(
                 options => options.UseSqlServer(Configuration.GetConnectionString("SportFixtureDBContext")
                 )

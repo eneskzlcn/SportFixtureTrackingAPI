@@ -24,14 +24,16 @@ namespace SportFixtureTrackingAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Fixture>>> GetFixtures()
         {
-            return await _context.Fixtures.ToListAsync();
+            var fixtures = await _context.Fixtures.Include(t => t.HomeTeam).Include(r => r.AwayTeam).ToListAsync();
+            return fixtures;
         }
 
         // GET: api/Fixtures/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Fixture>> GetFixture(int id)
         {
-            var fixture = await _context.Fixtures.FindAsync(id);
+            var fixture = await _context.Fixtures.Include(r => r.AwayTeam).Include(a => a.HomeTeam).Where(r=> r.FixtureId == id).FirstOrDefaultAsync();
+           // var fixture = await _context.Fixtures.FindAsync(id);
 
             if (fixture == null)
             {
@@ -40,7 +42,6 @@ namespace SportFixtureTrackingAPI.Controllers
 
             return fixture;
         }
-
         // PUT: api/Fixtures/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
@@ -88,6 +89,7 @@ namespace SportFixtureTrackingAPI.Controllers
         public async Task<IActionResult> DeleteFixture(int id)
         {
             var fixture = await _context.Fixtures.FindAsync(id);
+            AlsoDeleteRelatedFixtureResults(id);
             if (fixture == null)
             {
                 return NotFound();
@@ -98,7 +100,14 @@ namespace SportFixtureTrackingAPI.Controllers
 
             return NoContent();
         }
-
+        private async void AlsoDeleteRelatedFixtureResults(int fixtureId)
+        {
+            var fixtureResult = await _context.FixtureResults.Where(r => r.FixtureId == fixtureId).FirstOrDefaultAsync();
+            if(fixtureResult != null)
+            {
+                _context.FixtureResults.Remove(fixtureResult);
+            }
+        }
         private bool FixtureExists(int id)
         {
             return _context.Fixtures.Any(e => e.FixtureId == id);

@@ -24,7 +24,11 @@ namespace SportFixtureTrackingAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FixtureResult>>> GetFixtureResults()
         {
-            return await _context.FixtureResults.ToListAsync();
+            var fixtureResults = _context.FixtureResults.
+                Include(r => r.Fixture).ThenInclude(r => r.HomeTeam).
+                Include(r => r.Fixture).ThenInclude(r => r.AwayTeam).
+                Include(r => r.WinnerTeam).ThenInclude(w => w.Sport);
+            return await fixtureResults.ToListAsync();
         }
 
         // GET: api/FixtureResults/5

@@ -22,16 +22,26 @@ namespace SportFixtureTrackingAPI.Controllers
 
         // GET: api/Teams
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Team>>> GetTeams()
+        public async Task<ActionResult<IEnumerable<Team>>> GetTeams(int sportId = -1)
         {
-            return await _context.Teams.ToListAsync();
+            if (sportId == -1)
+            {
+                var teams = await _context.Teams.Include(t => t.Club).Include(t => t.Sport).ToListAsync();
+                return teams;
+            }
+            else
+            {
+                var teams = await _context.Teams.Include(t => t.Club).Include(t => t.Sport).Where(r => r.SportId == sportId).ToListAsync();
+                return teams;
+            }
         }
 
         // GET: api/Teams/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Team>> GetTeam(int id)
         {
-            var team = await _context.Teams.FindAsync(id);
+            //var team = await _context.Teams.FindAsync(id);
+            var team = await _context.Teams.Include(t => t.Club).Include(t => t.Sport).Where(t => t.TeamId == id).FirstOrDefaultAsync();
 
             if (team == null)
             {
